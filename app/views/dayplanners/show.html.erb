@@ -1,0 +1,123 @@
+<h2>This is the dayplanner awesomeness page</h2>
+
+<h3> polterabend activities </h3>
+<div class="pa-acts-btn">
+  <%= link_to save_pa_acts_path do %>
+    <div class="btn btn-primary">
+      Save the awesome activities you have chosen
+    </div>
+  <% end %>
+</div>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+                <div class='input-group date' id='datetimepicker3'>
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="acts-dayplanners-btn">
+  <%= submit_tag "Save the awesome dayplan you have chosen", class: "btn btn-primary" %>
+</div>
+
+<div class="row">
+  <div class="col-xs-3">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <h1 class="panel-title">Favourites</h1>
+      </div>
+      <div id="container1" class="panel-body box-container">
+        <% @activities.each do |activity| %>
+          <div itemid="<%= "itm-" + "#{activity.id}" %>" id='test' 
+               class="btn btn-default box-item activity">
+            <%= activity.name %>
+            <div class="pa-act hidden"><%= activity.id %></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="modal" 
+            data-target=".bs-example-modal-sm">Add Custom Activity</button>
+  </div>
+
+  <div class="test col-xs-2">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h1 class="panel-title">Begins - Ends</h1>
+      </div>
+
+      <% 12.times do |i| %>
+        <div class="box-container">
+          <div class="row">
+          <div class="time-field-<%= i %> hidden">
+            <div class="col-xs-6">
+                <%= render 'timepicker'%>
+              </div>
+              <div class="col-xs-6">
+                <%= render 'timepicker'%>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        <h1 class="panel-title">Polterabend</h1>
+      </div>
+      <div id="container2" class="box-container">
+        <% unless @plans.empty? %><% @plans.each do |plan| %>
+          <div itemid="<%= "itm-" + "#{plan.id}" %>" id='test'
+               class="btn btn-default box-item activity">
+            <%= plan.name %>
+            <div class="pa-act hidden"><%= plan.id %></div>
+          </div>
+        <% end %><% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(() => {
+    var loop_max;
+    if (<%= @plans.empty? %>){ 
+      loop_max = 0; 
+    } else { 
+      loop_max = <%=  @plans.length %>;
+    }
+    for (var i = 0; i < loop_max; i++){
+      $('.time-field-'+i).removeClass('hidden');
+      window.increment_items();
+    }
+  });
+  $(".acts-dayplanners-btn").on("click", function() {
+    var array = $("#container2>.activity>.pa-act");
+    var json_for_pa_acts = {};
+    json_for_pa_acts.activity_ids = [];
+
+    for (var i = 0; i < array.length; i++) {
+      json_for_pa_acts.activity_ids.push(array[i].innerHTML.replace(/ /g,"").replace(/\n/g,""));
+    }
+    json_for_pa_acts.dayplanner_id = <%= params[:id] %>;
+    
+    $.post(
+        '<%= save_pa_acts_path %>',
+        json_for_pa_acts,
+        function(data) {
+          alert('Saved your awesome dayplan');
+    });
+  });
+</script>

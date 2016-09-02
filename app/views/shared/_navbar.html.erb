@@ -1,0 +1,80 @@
+
+<div class="navbar-wagon">
+  <!-- Logo -->
+  <%= link_to root_path, class: "navbar-wagon-brand" do %>
+    <%= image_tag "logo.svg" %>
+  <% end %>
+
+  <!-- Right Navigation -->
+  <div class="navbar-wagon-right hidden-xs hidden-sm">
+
+
+  <div class= "navbar-wagon-activities">
+    <%= link_to 'Activities', activities_path, class: 'navbar-wagon-link navbar-wagon-item' %>
+  </div>
+    <!-- Different navigation if login or not -->
+
+
+    <% if user_signed_in? && current_user.membership.nil? %>
+
+      <div class="navbar-wagon-activities">
+        <%= link_to destroy_user_session_path, class: 'navbar-wagon-link navbar-wagon-item', method: :delete do %>
+                <%= t(".sign_out", default: "Log out") %>
+            <% end %>
+      </div>
+
+
+
+
+      <button type="button" class="btn" data-toggle="modal" data-target=".bs-example-modal-sm">Create a Polterabend</button>
+
+
+
+
+
+    <% elsif user_signed_in? %>
+
+
+        <%= link_to destroy_user_session_path, class: 'navbar-wagon-link navbar-wagon-item', method: :delete do %>
+                  <%= t(".sign_out", default: "Log out") %>
+              <% end %>
+
+
+
+
+    <%= link_to t(".polterabend", default: "My polterabend"), polterabend_path(current_user.membership.polterabend_id), class: "btn" %>
+
+
+    <% else %>
+
+   <!-- Login text link -->
+      <%= link_to t(".sign_in", default: "Login"), new_user_session_path, class: "navbar-wagon-item navbar-wagon-link" %>
+
+
+
+     <%= link_to t(".sign_up", default: "Create Polterabend"), new_user_registration_path, class: "btn" %>
+
+    <% end %>
+
+  </div>
+  <!-- Dropdown list appearing on mobile only -->
+ <div class="navbar-wagon-item hidden-md hidden-lg">
+    <div class="dropdown">
+      <i class="fa fa-bars dropdown-toggle" data-toggle="dropdown"></i>
+      <ul class="dropdown-menu dropdown-menu-right navbar-wagon-dropdown-menu">
+          <li> <%= link_to root_path do %>
+            <i class="fa fa-home"></i>  <%= t(".profile", default: "Home") %>
+            <% end %>
+          </li>
+        <li> <%= link_to polterabend_path(current_user) do %>
+          <i class="fa fa-user"></i> <%= t(".polterabend", default: "Go to the nice Polterabend")%>
+          <% end if user_signed_in? %></li>
+        <li><%= link_to destroy_user_session_path, method: :delete do %>
+          <i class="fa fa-sign-out"></i>  <%= t(".sign_out", default: "Log out") %>
+          <% end %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
